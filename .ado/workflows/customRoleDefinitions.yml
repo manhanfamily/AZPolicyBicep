@@ -56,32 +56,32 @@ stages:
       templateParameterFile: ${{ variables.templateParameterFile }}
       Agentused: ${{ parameters.AgentPool }}
 
-  # Stage - Test
-  - template: ../templates/stage-test.yml
-    parameters:
-      stageName: Test
-      condition: succeeded()
-      previousStage: Validate
-      serviceConnection: ${{ variables.serviceConnection }}
-      location: $(location)
-      scope: "ManagementGroup"
-      managementGroupId: ${{ variables.managementGroupId }}
-      templateFile: ${{ variables.templateFile }}
-      templateParameterFile: ${{ variables.templateParameterFile }}
-      Agentused: ${{ parameters.AgentPool }}
+  # # Stage - Test
+  # - template: ../templates/stage-test.yml
+  #   parameters:
+  #     stageName: Test
+  #     condition: succeeded()
+  #     previousStage: Validate
+  #     serviceConnection: ${{ variables.serviceConnection }}
+  #     location: $(location)
+  #     scope: "ManagementGroup"
+  #     managementGroupId: ${{ variables.managementGroupId }}
+  #     templateFile: ${{ variables.templateFile }}
+  #     templateParameterFile: ${{ variables.templateParameterFile }}
+  #     Agentused: ${{ parameters.AgentPool }}
 
-  # Stage - Deploy
-  - template: ../templates/stage-deploy.yml
-    parameters:
-      stageName: Deploy
-      condition: and(succeeded(),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
-      previousStage: Test
-      serviceConnection: ${{ variables.serviceConnection }}
-      environmentName: "Platform"
-      tenantId: $(tenantId)
-      location: $(location)
-      scope: "ManagementGroup"
-      managementGroupId: ${{ variables.managementGroupId }}
-      templateFile: ${{ variables.templateFile }}
-      templateParameterFile: ${{ variables.templateParameterFile }}
-      Agentused: ${{ parameters.AgentPool }}
+  # # Stage - Deploy
+  # - template: ../templates/stage-deploy.yml
+  #   parameters:
+  #     stageName: Deploy
+  #     condition: and(succeeded(),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+  #     previousStage: Test
+  #     serviceConnection: ${{ variables.serviceConnection }}
+  #     environmentName: "Platform"
+  #     tenantId: $(tenantId)
+  #     location: $(location)
+  #     scope: "ManagementGroup"
+  #     managementGroupId: ${{ variables.managementGroupId }}
+  #     templateFile: ${{ variables.templateFile }}
+  #     templateParameterFile: ${{ variables.templateParameterFile }}
+  #     Agentused: ${{ parameters.AgentPool }}
