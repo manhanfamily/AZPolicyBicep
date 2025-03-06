@@ -1,5 +1,6 @@
 name: "$(Date:ddMMyy).$(Rev:rr)-customRoleDefinitions"
 
+
 # Trigger - Trigger on the main branch.
 trigger:
   branches:
@@ -9,14 +10,9 @@ trigger:
     include:
       - src/modules/customRoleDefinitions/definitions/* # Custom Role Definitions Parameter Files.
 
-parameters:
-  - name: AgentPool
-    displayName: Pool Image
-    type: 'string'
-    default: 'Ubuntu-Latest (MS Hosted)'
-    values:
-      - 'Ubuntu-Latest (MS Hosted)' #microsoft hosted agent
-
+pool:
+  vmImage: 'ubuntu-latest'
+  
 # Variables - Variables template file.
 variables:
   - template: ../variables/variables.yml      #! check if we need this for sure 
@@ -39,7 +35,7 @@ stages:
       stageName: Build
       serviceConnection: ${{ variables.serviceConnection }}
       templateFile: ${{ variables.templateFile }}
-      Agentused: ${{ parameters.AgentPool }}
+
 
   # Stage - Validate
   - template: ../templates/stage-validate.yml
@@ -54,7 +50,7 @@ stages:
       managementGroupId: ${{ variables.managementGroupId }}
       templateFile: ${{ variables.templateFile }}
       templateParameterFile: ${{ variables.templateParameterFile }}
-      Agentused: ${{ parameters.AgentPool }}
+
 
   # # Stage - Test
   # - template: ../templates/stage-test.yml
@@ -68,7 +64,7 @@ stages:
   #     managementGroupId: ${{ variables.managementGroupId }}
   #     templateFile: ${{ variables.templateFile }}
   #     templateParameterFile: ${{ variables.templateParameterFile }}
-  #     Agentused: ${{ parameters.AgentPool }}
+
 
   # # Stage - Deploy
   # - template: ../templates/stage-deploy.yml
@@ -84,4 +80,3 @@ stages:
   #     managementGroupId: ${{ variables.managementGroupId }}
   #     templateFile: ${{ variables.templateFile }}
   #     templateParameterFile: ${{ variables.templateParameterFile }}
-  #     Agentused: ${{ parameters.AgentPool }}
