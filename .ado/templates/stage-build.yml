@@ -9,15 +9,11 @@ parameters:
     default: true
   - name: previousStage
     default:
-  - name: Agentused
 
 stages:
   - stage: ${{ parameters.stageName }}
     pool:
-      ${{ if eq(parameters.Agentused, 'Ubuntu-Latest (Synergy Hosted)') }}:
-        name: 'Azure_LinuxVMSS_agent'
-      ${{ else }}:
-        vmImage: 'ubuntu-latest'
+      vmImage: 'ubuntu-latest'
     displayName: "${{ parameters.stageName }}"
     dependsOn: ${{ parameters.previousStage }}
     condition: ${{ parameters.condition }}
