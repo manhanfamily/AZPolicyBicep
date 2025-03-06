@@ -8,8 +8,6 @@ metadata description = 'Custom Policy Definitions for Azure Landing Zones'
 param targetManagementGroupId string = 'alz'
 
 var targetManagementGroupResourceId = tenantResourceId('Microsoft.Management/managementGroups', targetManagementGroupId)
-
-// This variable contains a number of objects that load in the custom Azure Policy Defintions. - this is automatically created in the file 'src\modules\policy\lib\policy_definitions\_policyDefinitionsBicepInput.txt' via a GitHub action. 
 var customPolicyDefinitionsArray = [
   {
     name: 'Deploy-Diagnostics-AA'
@@ -236,16 +234,16 @@ var customPolicyDefinitionsArray = [
     libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_trafficmanager.json'))
   }
   {
-    name: 'Deploy-Diagnostics-VirtualNetwork'
-    libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_virtualnetwork.json'))
-  }
-  {
     name: 'Deploy-Diagnostics-VM'
     libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_vm.json'))
   }
   {
     name: 'Deploy-Diagnostics-VMSS'
     libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_vmss.json'))
+  }
+  {
+    name: 'Deploy-Diagnostics-VirtualNetwork'
+    libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_virtualnetwork.json'))
   }
   {
     name: 'Deploy-Diagnostics-VNetGW'
@@ -271,11 +269,13 @@ var customPolicyDefinitionsArray = [
     name: 'Deploy-Diagnostics-WVDWorkspace'
     libDefinition: json(loadTextContent('lib/policy_definitions/policy_definition_es_deploy_diagnostics_wvdworkspace.json'))
   }
-  
+]
+
 
 // This variable contains a number of objects that load in the custom Azure Policy Set/Initiative Defintions that are provided as part of the ESLZ/ALZ reference implementation - this is automatically created in the file 'infra-as-code\bicep\modules\policy\lib\policy_set_definitions\_policySetDefinitionsBicepInput.txt' via a GitHub action, that runs on a daily schedule, and is then manually copied into this variable.
 // Policy Set/Initiative Definition Parameter Variables
 var customPolicySetDefinitionsArray = [
+
   {
     name: 'Deploy-Diagnostics-LogAnalytics'
     libSetDefinition: json(loadTextContent('lib/policy_set_definitions/policy_set_definition_es_deploy_diagnostics_loganalytics.json'))
@@ -570,20 +570,20 @@ var customPolicySetDefinitionsArray = [
         definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-TrafficManager'
         definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.TrafficManagerDeployDiagnosticLogDeployLogAnalytics.parameters
       }
-      {
-        definitionReferenceId: 'VirtualMachinesDeployDiagnosticLogDeployLogAnalytics'
-        definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VM'
-        definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.VirtualMachinesDeployDiagnosticLogDeployLogAnalytics.parameters
+      {	
+        definitionReferenceId: 'VirtualMachinesDeployDiagnosticLogDeployLogAnalytics'	
+        definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VM'	
+        definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.VirtualMachinesDeployDiagnosticLogDeployLogAnalytics.parameters	
       }
       {
         definitionReferenceId: 'VirtualNetworkDeployDiagnosticLogDeployLogAnalytics'
         definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VirtualNetwork'
         definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.VirtualNetworkDeployDiagnosticLogDeployLogAnalytics.parameters
       }
-      {
-        definitionReferenceId: 'VMSSDeployDiagnosticLogDeployLogAnalytics'
-        definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VMSS'
-        definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.VMSSDeployDiagnosticLogDeployLogAnalytics.parameters
+      {	
+        definitionReferenceId: 'VMSSDeployDiagnosticLogDeployLogAnalytics'	
+        definitionId: '${targetManagementGroupResourceId}/providers/Microsoft.Authorization/policyDefinitions/Deploy-Diagnostics-VMSS'	
+        definitionParameters: PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters.VMSSDeployDiagnosticLogDeployLogAnalytics.parameters	
       }
       {
         definitionReferenceId: 'VNetGWDeployDiagnosticLogDeployLogAnalytics'
@@ -608,9 +608,7 @@ var customPolicySetDefinitionsArray = [
     ]
   }
 
- 
-]
-
+  
 // Policy Set/Initiative Definition Parameter Variables
 
 var PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters = loadJsonContent('lib/policy_set_definitions/policy_set_definition_es_deploy_diagnostics_loganalytics.parameters.json')
