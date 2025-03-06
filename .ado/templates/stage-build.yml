@@ -1,0 +1,74 @@
+---
+parameters:
+  - name: stageName
+  - name: serviceConnection
+  - name: templateFile
+  - name: parameters
+    default:
+  - name: condition
+    default: true
+  - name: previousStage
+    default:
+  - name: Agentused
+
+stages:
+  - stage: ${{ parameters.stageName }}
+    pool:
+      ${{ if eq(parameters.Agentused, 'Ubuntu-Latest (Synergy Hosted)') }}:
+        name: 'Azure_LinuxVMSS_agent'
+      ${{ else }}:
+        vmImage: 'ubuntu-latest'
+    displayName: "${{ parameters.stageName }}"
+    dependsOn: ${{ parameters.previousStage }}
+    condition: ${{ parameters.condition }}
+
+    jobs:
+      - job: Build
+        displayName: "Build"
+        continueOnError: false
+
+        steps:
+          # Checkout Repos
+          - checkout: self # Checkout the local "synergy-au/azure-infrastructure-sap" repo
+            name: checkoutRepository
+            displayName: Checkout Repository
+            submodules: true
+            lfs: false
+            clean: true
+            continueOnError: false
+            enabled: true
+
+          # Bicep Build
+          - task: AzureCLI@2
+            name: bicepBuild
+            displayName: "Bicep Build"
+            enabled: true
+            continueOnError: false
+            inputs:
+              displayName: "AzCLI: Build Bicep"
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                Start-Transcript build_output.txt
+                az bicep build --file ${{ parameters.templateFile }} --stdout
+                Stop-Transcript
+              powerShellErrorActionPreference: "stop"
+              addSpnToEnvironment: true
+              useGlobalConfig: true
+              failOnStandardError: true
+              powerShellIgnoreLASTEXITCODE: false
+
+          # Copy Output
+          - task: CopyFiles@2
+            condition: succeededOrFailed()
+            inputs:
+              contents: "build_output.txt"
+              targetFolder: $(Build.ArtifactStagingDirectory)
+
+          # Publish Artifact
+          - task: PublishBuildArtifacts@1
+            condition: succeededOrFailed()
+            inputs:
+              pathToPublish: $(Build.ArtifactStagingDirectory)
+              artifactName: BuildOutputs

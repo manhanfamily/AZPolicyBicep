@@ -1,0 +1,174 @@
+---
+parameters:
+  - name: stageName
+  - name: serviceConnection
+  - name: templateFile
+  - name: templateParameterFile
+  - name: parameters
+    default:
+  - name: condition
+    default: true
+  - name: previousStage
+    default:
+  - name: tenantId
+    default:
+  - name: managementGroupId
+    default:
+  - name: subscriptionId
+    default:
+  - name: resourceGroupName
+    default:
+  - name: location
+    default:
+  - name: scope
+    default:
+  - name: Agentused
+
+stages:
+  - stage: ${{ parameters.stageName }}
+    pool:
+      ${{ if eq(parameters.Agentused, 'Ubuntu-Latest (Synergy Hosted)') }}:
+        name: 'Azure_LinuxVMSS_agent'
+      ${{ else }}:
+        vmImage: 'ubuntu-latest'
+    displayName: "${{ parameters.stageName }}"
+    dependsOn: ${{ parameters.previousStage }}
+    condition: ${{ parameters.condition }}
+
+    jobs:
+      - job: Validate
+        displayName: "Validate"
+        continueOnError: false
+
+        steps:
+          # Checkout Repos
+          - checkout: self # Checkout the "synergy-au/azure-infrastructure-sap" repo
+            name: checkoutRepository
+            displayName: Checkout Repository
+            submodules: true
+            lfs: false
+            clean: true
+            continueOnError: false
+            enabled: true
+            
+          # Restore the module from the Private Azure Container Registry
+          - task: AzureCLI@2
+            displayName: "AzCLI: Restore Bicep Modules"
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az bicep restore --file ${{ parameters.templateFile }}
+
+          # Install PSRule.Rules.Azure from the PowerShell Gallery
+          - task: ps-rule-install@2
+            displayName: Install PSRule
+            inputs:
+              module: PSRule.Rules.Azure # Install PSRule.Rules.Azure from the PowerShell Gallery.
+              latest: false # Only install the module if not already installed.
+              prerelease: false # Install stable versions only.
+
+          # Run analysis from JSON files using the `PSRule.Rules.Azure` module and custom rules from `.ps-rule/`.
+          - task: ps-rule-assert@2
+            displayName: Run PSRule against IaC
+            continueOnError: false
+            inputs:
+              inputPath: ${{ parameters.templateFile }} # The path PSRule will look for files to validate.
+              modules: "PSRule.Rules.Azure,PSRule.Monitor" # Analyze objects using the rules within the PSRule.Rules.Azure PowerShell module.
+              baseline: Azure.GA_2022_12 # The name of a PSRule baseline to use.
+              outputFormat: NUnit3 # Save results to an NUnit report.
+              outputPath: reports/ps-rule-results.xml # Write NUnit report to 'reports/ps-rule-results.xml'.
+
+          # Publish NUnit report as test results
+          - task: PublishTestResults@2
+            displayName: Publish PSRule Results
+            inputs:
+              testRunTitle: "PSRule" # The title to use for the test run.
+              testRunner: NUnit # Import report using the NUnit format.
+              testResultsFiles: "reports/ps-rule-results.xml" # The previously saved NUnit report.
+
+          # Tenant Scope Deployment
+          - task: AzureCLI@2
+            displayName: "AzCLI: Validate Tenant Group Deployment"
+            condition: ${{ eq(parameters.scope, 'Tenant')}}
+            enabled: true
+            continueOnError: false
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment tenant validate `
+                  --location ${{ parameters.location }} `
+                  --template-file ${{ parameters.templateFile }} `
+                  --parameters ${{ parameters.templateParameterFile }}
+              powerShellErrorActionPreference: "stop"
+              addSpnToEnvironment: false
+              useGlobalConfig: false
+              failOnStandardError: false
+              powerShellIgnoreLASTEXITCODE: false
+
+          # Management Group Scope Deployment
+          - task: AzureCLI@2
+            displayName: "AzCLI: Validate Management Group Deployment"
+            condition: ${{ eq(parameters.scope, 'ManagementGroup')}}
+            enabled: true
+            continueOnError: false
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment mg validate `
+                  --location ${{ parameters.location }} `
+                  --management-group-id ${{ parameters.managementGroupId }} `
+                  --template-file ${{ parameters.templateFile }} `
+                  --parameters ${{ parameters.templateParameterFile }}
+              powerShellErrorActionPreference: "stop"
+              addSpnToEnvironment: false
+              useGlobalConfig: false
+              failOnStandardError: false
+              powerShellIgnoreLASTEXITCODE: false
+
+          # Subscription Scope Deployment
+          - task: AzureCLI@2
+            displayName: "AzCLI: Validate Subscription Deployment"
+            condition: ${{ eq(parameters.scope, 'Subscription')}}
+            enabled: true
+            continueOnError: false
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment sub validate `
+                  --location ${{ parameters.location }} `
+                  --template-file ${{ parameters.templateFile }} `
+                  --parameters ${{ parameters.templateParameterFile }}
+              powerShellErrorActionPreference: "stop"
+              addSpnToEnvironment: false
+              useGlobalConfig: false
+              failOnStandardError: false
+              powerShellIgnoreLASTEXITCODE: false
+
+          # Resource Group Scope Deployment
+          - task: AzureCLI@2
+            displayName: "AzCLI: Validate Resource Group Deployment"
+            condition: ${{ eq(parameters.scope, 'ResourceGroup')}}
+            enabled: true
+            continueOnError: false
+            inputs:
+              azureSubscription: ${{ parameters.serviceConnection }}
+              scriptType: pscore
+              scriptLocation: inlineScript
+              inlineScript: |
+                az deployment group validate `
+                  --resource-group ${{ parameters.resourceGroupName }} `
+                  --template-file ${{ parameters.templateFile }} `
+                  --parameters ${{ parameters.templateParameterFile }}
+              powerShellErrorActionPreference: "stop"
+              addSpnToEnvironment: false
+              useGlobalConfig: false
+              failOnStandardError: false
+              powerShellIgnoreLASTEXITCODE: false

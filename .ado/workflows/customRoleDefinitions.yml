@@ -1,0 +1,87 @@
+name: "$(Date:ddMMyy).$(Rev:rr)-customRoleDefinitions"
+
+# Trigger - Trigger on the main branch.
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/modules/customRoleDefinitions/definitions/* # Custom Role Definitions Parameter Files.
+
+parameters:
+  - name: AgentPool
+    displayName: Pool Image
+    type: 'string'
+    default: 'Ubuntu-Latest (MS Hosted)'
+    values:
+      - 'Ubuntu-Latest (MS Hosted)' #microsoft hosted agent
+
+# Variables - Variables template file.
+variables:
+  - template: ../variables/variables.yml      #! check if we need this for sure 
+  - group: EnergyGrpVG                        #! check if we need this for sure 
+
+  - name: serviceConnection
+    value: $(platformServiceConnection)   
+  - name: managementGroupId
+    value: $(rootMg)
+  - name: templateFile
+    value: $(customRoleDefinitionsModule)
+  - name: templateParameterFile
+    value: $(customRoleDefinitionsConfiguration)
+
+
+stages:
+  # Stage - Build
+  - template: ../templates/stage-build.yml
+    parameters:
+      stageName: Build
+      serviceConnection: ${{ variables.serviceConnection }}
+      templateFile: ${{ variables.templateFile }}
+      Agentused: ${{ parameters.AgentPool }}
+
+  # Stage - Validate
+  - template: ../templates/stage-validate.yml
+    parameters:
+      stageName: Validate
+      condition: succeeded()
+      previousStage: Build
+      serviceConnection: ${{ variables.serviceConnection }}
+      tenantId: $(tenantId)
+      location: $(location)
+      scope: "ManagementGroup"
+      managementGroupId: ${{ variables.managementGroupId }}
+      templateFile: ${{ variables.templateFile }}
+      templateParameterFile: ${{ variables.templateParameterFile }}
+      Agentused: ${{ parameters.AgentPool }}
+
+  # Stage - Test
+  - template: ../templates/stage-test.yml
+    parameters:
+      stageName: Test
+      condition: succeeded()
+      previousStage: Validate
+      serviceConnection: ${{ variables.serviceConnection }}
+      location: $(location)
+      scope: "ManagementGroup"
+      managementGroupId: ${{ variables.managementGroupId }}
+      templateFile: ${{ variables.templateFile }}
+      templateParameterFile: ${{ variables.templateParameterFile }}
+      Agentused: ${{ parameters.AgentPool }}
+
+  # Stage - Deploy
+  - template: ../templates/stage-deploy.yml
+    parameters:
+      stageName: Deploy
+      condition: and(succeeded(),eq(variables['Build.SourceBranch'], 'refs/heads/main'))
+      previousStage: Test
+      serviceConnection: ${{ variables.serviceConnection }}
+      environmentName: "Platform"
+      tenantId: $(tenantId)
+      location: $(location)
+      scope: "ManagementGroup"
+      managementGroupId: ${{ variables.managementGroupId }}
+      templateFile: ${{ variables.templateFile }}
+      templateParameterFile: ${{ variables.templateParameterFile }}
+      Agentused: ${{ parameters.AgentPool }}

@@ -1,0 +1,63 @@
+---
+variables:
+  # Common
+  - name: orgName
+    value: energy
+  - name: location
+    value: australiaeast
+  - name: agent
+    value: ubuntu-latest
+  - name: azvmss-agent
+    value: Azure_LinuxVMSS_agent
+  - name: platformPrefix
+    value: "plat"
+  - name: platformMgmtSubPrefix
+    value: "mgmt"
+  - name: platformIdamSubPrefix
+    value: "idam"
+  - name: platformConnSubPrefix
+    value: "conn"
+  - name: regionPrefix
+    value: "ae"
+  - name: subscriptionPrefix
+    value: "sub"
+  - name: resourceGroupPrefix
+    value: "rg"
+
+  # Management Groupss
+  - name: tenantRootGroup
+    value: "33f689c3-8358-429c-8cbb-2866159a7d8f"
+  - name: rootMg
+    value: "EnergyGrp"
+
+
+  # Service Principals
+  - name: platformServiceConnection
+    value: "sc-EnergyGrp" 
+
+
+  # Core Paths
+  - name: corePathOrchestration
+    value: $(System.DefaultWorkingDirectory)/azure-cloud-platform/src/orchestration
+  - name: corePathModules
+    value: $(System.DefaultWorkingDirectory)/azure-cloud-platform/src/modules
+  - name: corePathConfig
+    value: $(Build.SourcesDirectory)/azure-cloud-platform/src/configuration
+  - name: corePathScripts
+    value: $(Build.SourcesDirectory)/azure-cloud-platform/.ado/scripts
+
+  # Bicep Orchestration Templates
+
+
+  # Bicep Orchestration Configuration Path
+
+  # Bicep Orchestration Configuration Files
+
+  # Bicep Modules
+  - name: customRoleDefinitionsModule
+    value: "$(corePathModules)/customRoleDefinitions/customRoleDefinitions.bicep"
+
+
+  # Bicep Module Configuration Files
+  - name: customRoleDefinitionsConfiguration
+    value: "$(corePathConfig)/platform/customRoleDefinitions.parameters.json"
