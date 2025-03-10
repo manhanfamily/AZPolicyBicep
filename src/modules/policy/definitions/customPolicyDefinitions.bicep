@@ -632,27 +632,27 @@ resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01
   }
 ]
 
-// // Resource: Policy Set Definitions
-// resource policySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [
-//   for policySet in customPolicySetDefinitionsArray: {
-//     dependsOn: [
-//       policyDefinitions // Must wait for policy definitons to be deployed before starting the creation of Policy Set/Initiative Defininitions
-//     ]
-//     name: policySet.libSetDefinition.name
-//     properties: {
-//       description: policySet.libSetDefinition.properties.description
-//       displayName: policySet.libSetDefinition.properties.displayName
-//       metadata: policySet.libSetDefinition.properties.metadata
-//       parameters: policySet.libSetDefinition.properties.parameters
-//       policyType: policySet.libSetDefinition.properties.policyType
-//       policyDefinitions: [
-//         for policySetDef in policySet.libSetChildDefinitions: {
-//           policyDefinitionReferenceId: policySetDef.definitionReferenceID
-//           policyDefinitionId: policySetDef.definitionID
-//           parameters: policySetDef.definitionParameters
-//         }
-//       ]
-//       policyDefinitionGroups: policySet.libSetDefinition.properties.policyDefinitionGroups
-//     }
-//   }
-// ]
+// Resource: Policy Set Definitions
+resource policySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [
+  for policySet in customPolicySetDefinitionsArray: {
+    dependsOn: [
+      policyDefinitions // Must wait for policy definitons to be deployed before starting the creation of Policy Set/Initiative Defininitions
+    ]
+    name: policySet.libSetDefinition.name
+    properties: {
+      description: policySet.libSetDefinition.properties.description
+      displayName: policySet.libSetDefinition.properties.displayName
+      metadata: policySet.libSetDefinition.properties.metadata
+      parameters: policySet.libSetDefinition.properties.parameters
+      policyType: policySet.libSetDefinition.properties.policyType
+      policyDefinitions: [
+        for policySetDef in policySet.libSetChildDefinitions: {
+          policyDefinitionReferenceId: policySetDef.definitionReferenceID
+          policyDefinitionId: policySetDef.definitionID
+          parameters: policySetDef.definitionParameters
+        }
+      ]
+      policyDefinitionGroups: policySet.libSetDefinition.properties.policyDefinitionGroups
+    }
+  }
+]
