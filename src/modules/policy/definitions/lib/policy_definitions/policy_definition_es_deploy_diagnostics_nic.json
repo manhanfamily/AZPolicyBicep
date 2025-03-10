@@ -1,12 +1,12 @@
 {
-  "name": "Deploy-Diagnostics-VM",
+  "name": "Deploy-Diagnostics-NIC",
   "type": "Microsoft.Authorization/policyDefinitions",
   "apiVersion": "2021-06-01",
   "scope": null,
   "properties": {
     "policyType": "Custom",
-    "displayName": "Deploy Diagnostic Settings for Virtual Machines to Log Analytics workspace and Storage Archive account",
-    "description": "Deploys the diagnostic settings for Virtual Machines to stream to a Log Analytics workspace and Storage Archive account when any Virtual Machines which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
+    "displayName": "Deploy Diagnostic Settings for Network Interfaces to Log Analytics workspace and Storage Archive account",
+    "description": "Deploys the diagnostic settings for Network Interfaces to stream to a Log Analytics workspace and Storage Archive account when any Network Interfaces which is missing this diagnostic settings is created or updated. The Policy will set the diagnostic with all metrics and category enabled",
     "metadata": {
       "category": "Monitoring",
       "version": "2.0.0",
@@ -77,7 +77,7 @@
     "policyRule": {
       "if": {
         "field": "type",
-        "equals": "Microsoft.Compute/virtualMachines"
+        "equals": "Microsoft.Network/networkInterfaces"
       },
       "then": {
         "effect": "[parameters('effect')]",
@@ -121,7 +121,7 @@
                     "type": "string"
                   },
                   "storageAccount": {
-                    "type": "string"
+                     "type": "string"
                   },
                   "metricsEnabled": {
                     "type": "string"
@@ -133,7 +133,7 @@
                 "variables": {},
                 "resources": [
                   {
-                    "type": "Microsoft.Compute/virtualMachines/providers/diagnosticSettings",
+                    "type": "Microsoft.Network/networkInterfaces/providers/diagnosticSettings",
                     "apiVersion": "2021-05-01-preview",
                     "name": "[concat(parameters('resourceName'), '/', 'Microsoft.Insights/', parameters('profileName'))]",
                     "location": "[parameters('location')]",
@@ -147,8 +147,8 @@
                           "timeGrain": null,
                           "enabled": "[parameters('metricsEnabled')]",
                           "retentionPolicy": {
-                            "days": 0,
-                            "enabled": false
+                            "enabled": false,
+                            "days": 0
                           }
                         }
                       ],
