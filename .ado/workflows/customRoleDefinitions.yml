@@ -8,24 +8,24 @@ trigger:
       - main
   paths:
     include:
-      - src/modules/customRoleDefinitions/definitions/* # Custom Role Definitions Parameter Files.
+      - src/configuration/platform/customPolicyDefinitions.parameters.json # Custom Policy Definitions Parameter File.
 
 pool:
   vmImage: 'ubuntu-latest'
   
 # Variables - Variables template file.
 variables:
-  - template: ../variables/variables.yml      #! check if we need this for sure 
-  - group: EnergyGrpVG                        #! check if we need this for sure 
+  - template: ../variables/variables.yml     
+  - group: EnergyGrpVG                        
 
   - name: serviceConnection
     value: $(platformServiceConnection)   
   - name: managementGroupId
     value: $(rootMg)
   - name: templateFile
-    value: $(customRoleDefinitionsModule)
+    value: $(customPolicyDefinitions)
   - name: templateParameterFile
-    value: $(customRoleDefinitionsConfiguration)
+    value: $(customPolicyDefinitionsConfiguration)
 
 
 stages:
