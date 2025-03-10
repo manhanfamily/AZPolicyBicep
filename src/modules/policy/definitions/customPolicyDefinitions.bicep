@@ -617,20 +617,20 @@ var customPolicySetDefinitionsArray = [
 ]
 
 // Resource: Policy Definitions
-resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = {
-  for policy in customPolicyDefinitionsArray: 
-  name: policy.libDefinition.name
-  properties: {
-    description: policy.libDefinition.properties.description
-    displayName: policy.libDefinition.properties.displayName
-    metadata: policy.libDefinition.properties.metadata
-    mode: policy.libDefinition.properties.mode
-    parameters: policy.libDefinition.properties.parameters
-    policyType: policy.libDefinition.properties.policyType
-    policyRule: policy.libDefinition.properties.policyRule
+resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [
+  for policy in customPolicyDefinitionsArray: {
+    name: policy.libDefinition.name
+    properties: {
+      description: policy.libDefinition.properties.description
+      displayName: policy.libDefinition.properties.displayName
+      metadata: policy.libDefinition.properties.metadata
+      mode: policy.libDefinition.properties.mode
+      parameters: policy.libDefinition.properties.parameters
+      policyType: policy.libDefinition.properties.policyType
+      policyRule: policy.libDefinition.properties.policyRule
+    }
   }
-}
-
+]
 
 // // Resource: Policy Set Definitions
 // resource policySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2023-04-01' = [
