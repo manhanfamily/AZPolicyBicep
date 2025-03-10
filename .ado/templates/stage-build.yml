@@ -47,6 +47,9 @@ stages:
               scriptLocation: inlineScript
               inlineScript: |
                 Start-Transcript build_output.txt
+                pwd
+                ls -ltr
+                ls -ltr ${{ parameters.templateFile }}
                 az bicep build --file ${{ parameters.templateFile }} --stdout
                 Stop-Transcript
               powerShellErrorActionPreference: "stop"
