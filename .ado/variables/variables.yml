@@ -37,8 +37,6 @@ variables:
 
 
   # Core Paths
-  - name: corePathOrchestration
-    value: $(System.DefaultWorkingDirectory)/AZPolicyBicep/src/orchestration  
   - name: corePathModules
     value: $(System.DefaultWorkingDirectory)/AZPolicyBicep/src/modules
   - name: corePathConfig
@@ -54,10 +52,9 @@ variables:
   # Bicep Orchestration Configuration Files
 
   # Bicep Modules
-  - name: customRoleDefinitionsModule
-    value: "$(corePathModules)/customRoleDefinitions/customRoleDefinitions.bicep"
-
+  - name: customPolicyDefinitions
+    value: "$(corePathModules)/policy/definitions/customPolicyDefinitions.bicep"
 
   # Bicep Module Configuration Files
-  - name: customRoleDefinitionsConfiguration
-    value: "$(corePathConfig)/platform/customRoleDefinitions.parameters.json"
+  - name: customPolicyDefinitionsConfiguration
+    value: "$(corePathConfig)/platform/customPolicyDefinitions.parameters.json"
