@@ -617,8 +617,7 @@ var customPolicySetDefinitionsArray = [
 
 
 // Resource: Policy Definitions
-resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [
-  for policy in customPolicyDefinitionsArray: {
+resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = [for policy in customPolicyDefinitionsArray: {
     name: policy.libDefinition.name
     properties: {
       description: policy.libDefinition.properties.description
