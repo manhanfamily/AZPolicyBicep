@@ -281,7 +281,6 @@ var PolicySetDefinitionEsDeployDiagnosticsLoganalyticsParameters = loadJsonConte
 // This variable contains a number of objects that load in the custom Azure Policy Set/Initiative Defintions that are provided as part of the ESLZ/ALZ reference implementation - this is automatically created in the file 'infra-as-code\bicep\modules\policy\lib\policy_set_definitions\_policySetDefinitionsBicepInput.txt' via a GitHub action, that runs on a daily schedule, and is then manually copied into this variable.
 // Policy Set/Initiative Definition Parameter Variables
 var customPolicySetDefinitionsArray = [
-
   {
     name: 'Deploy-Diagnostics-LogAnalytics'
     libSetDefinition: json(loadTextContent('lib/policy_set_definitions/policy_set_definition_es_deploy_diagnostics_loganalytics.json'))
@@ -647,8 +646,8 @@ resource policySetDefinitions 'Microsoft.Authorization/policySetDefinitions@2023
       policyType: policySet.libSetDefinition.properties.policyType
       policyDefinitions: [
         for policySetDef in policySet.libSetChildDefinitions: {
-          policyDefinitionReferenceId: policySetDef.definitionReferenceID
-          policyDefinitionId: policySetDef.definitionID
+          policyDefinitionReferenceId: policySetDef.definitionReferenceId
+          policyDefinitionId: policySetDef.definitionId
           parameters: policySetDef.definitionParameters
         }
       ]
