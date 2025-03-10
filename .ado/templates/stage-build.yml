@@ -25,7 +25,7 @@ stages:
 
         steps:
           # Checkout Repos
-          - checkout: self # Checkout the local "synergy-au/azure-infrastructure-sap" repo
+          - checkout: self 
             name: checkoutRepository
             displayName: Checkout Repository
             submodules: true
