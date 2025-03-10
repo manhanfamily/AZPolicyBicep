@@ -614,7 +614,7 @@ var customPolicySetDefinitionsArray = [
     ]
   }
 
-
+]
 
 // Resource: Policy Definitions
 resource policyDefinitions 'Microsoft.Authorization/policyDefinitions@2023-04-01' = {
