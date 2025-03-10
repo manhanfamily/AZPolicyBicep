@@ -38,13 +38,13 @@ variables:
 
   # Core Paths
   - name: corePathOrchestration
-    value: $(System.DefaultWorkingDirectory)/azure-cloud-platform/src/orchestration
+    value: $(System.DefaultWorkingDirectory)/AZPolicyBicep/src/orchestration  
   - name: corePathModules
-    value: $(System.DefaultWorkingDirectory)/azure-cloud-platform/src/modules
+    value: $(System.DefaultWorkingDirectory)/AZPolicyBicep/src/modules
   - name: corePathConfig
-    value: $(Build.SourcesDirectory)/azure-cloud-platform/src/configuration
+    value: $(Build.SourcesDirectory)/AZPolicyBicep/src/configuration
   - name: corePathScripts
-    value: $(Build.SourcesDirectory)/azure-cloud-platform/.ado/scripts
+    value: $(Build.SourcesDirectory)/AZPolicyBicep/.ado/scripts
 
   # Bicep Orchestration Templates
 
