@@ -38,11 +38,11 @@ variables:
 
   # Core Paths
   - name: corePathModules
-    value: $(System.DefaultWorkingDirectory)/AZPolicyBicep/src/modules
+    value: $(System.DefaultWorkingDirectory)/src/modules
   - name: corePathConfig
-    value: $(Build.SourcesDirectory)/AZPolicyBicep/src/configuration
+    value: $(Build.SourcesDirectory)/src/configuration
   - name: corePathScripts
-    value: $(Build.SourcesDirectory)/AZPolicyBicep/.ado/scripts
+    value: $(Build.SourcesDirectory)/.ado/scripts
 
   # Bicep Orchestration Templates
 
