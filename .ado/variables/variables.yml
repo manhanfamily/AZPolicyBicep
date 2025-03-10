@@ -53,7 +53,7 @@ variables:
 
   # Bicep Modules
   - name: customPolicyDefinitions
-    value: "$(corePathModules)/policy/definitions/customPolicyDefinitions.bicep"
+    value: "$(corePathModules)/policy/definitions/customPolicyDefinitions.bicep" 
 
   # Bicep Module Configuration Files
   - name: customPolicyDefinitionsConfiguration
